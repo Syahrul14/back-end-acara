@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 import { encrypt } from "../utils/encryption";
+import { sendMail, renderMailHtml} from "../utils/mail/mail";
+import { CLIENT_HOST } from "../utils/env";
+import { send } from "process";
 
 export interface User {
   fullName: string;
@@ -10,6 +13,7 @@ export interface User {
   profilePicture: string;
   isActive: boolean;
   activationCode: string;
+  createdAt?: string;
 }
 
 const Schmea = mongoose.Schema;
@@ -57,6 +61,34 @@ UserSchema.pre("save", function (next) {
   user.password = encrypt(user.password);
 
   next();
+});
+
+UserSchema.post("save", async function (doc, next) {
+   try {
+    const user = doc;
+   
+    console.log("Send Email to: ", user.email);
+
+    const contentMail = await renderMailHtml("registration-success.ejs", {
+      username: user.username,
+      fullName: user.fullName,
+      email: user.email,
+      createdAt: user.createdAt,
+      activationLink: `${CLIENT_HOST}/auth/activation?code=${user.activationCode}`
+    });
+
+    await sendMail({
+      from: "mr.funy408@gmail.com",
+      to: user.email,
+      subject: "Aktivasi Akun Anda",
+      html: contentMail,
+    });
+   } catch (error) {
+    console.log("error > ", error);
+   } finally {
+     next();
+   }
+
 });
 
 UserSchema.methods.toJSON = function () {
