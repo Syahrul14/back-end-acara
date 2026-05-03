@@ -29,6 +29,16 @@ const doc = {
         identifier: "syahzl",
         password: "12345678"
       },
+      RegisterRequest: {
+        fullName: "Syahrul R",
+        username: "syahzl",
+        email: "syahzl@gmail.com",
+        password: "12345678",
+        confirmPassword: "12345678"
+      },
+      ActivationRequest: {
+        code: "abcdef"
+      }
     }
   }
 };

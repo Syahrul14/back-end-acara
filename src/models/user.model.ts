@@ -26,10 +26,12 @@ const UserSchema = new Schmea<User>({
   username: {
     type: Schmea.Types.String,
     required: true,
+    unique: true,
   },
   email: {
     type: Schmea.Types.String,
     required: true,
+    unique: true,
   },
   password: {
     type: Schmea.Types.String,
@@ -59,6 +61,7 @@ UserSchema.pre("save", function (next) {
   const user = this;
 
   user.password = encrypt(user.password);
+  user.activationCode = encrypt(user.id);
 
   next();
 });
