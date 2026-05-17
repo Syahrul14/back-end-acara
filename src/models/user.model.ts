@@ -3,6 +3,7 @@ import { encrypt } from "../utils/encryption";
 import { sendMail, renderMailHtml} from "../utils/mail/mail";
 import { CLIENT_HOST } from "../utils/env";
 import { send } from "process";
+import { ROLES } from "../utils/constant";
 
 export interface User {
   fullName: string;
@@ -39,8 +40,8 @@ const UserSchema = new Schmea<User>({
   },
   role: {
     type: Schmea.Types.String,
-    enum: ["user", "admin"],
-    default: "user",
+    enum: [ROLES.ADMIN, ROLES.MEMBER],
+    default: ROLES.MEMBER,
   },
   profilePicture: {
     type: Schmea.Types.String,
