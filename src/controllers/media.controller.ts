@@ -1,14 +1,12 @@
 import { Response } from "express";
 import { IReqUser} from "../utils/interfaces";
 import uploader from "../utils/uploader";
+import response from "../utils/response";
 
 export default {
   async single(req:IReqUser, res:Response) {
     if (!req.file) {
-      return res.status(400).json({
-        message: "File is not exist",
-        data: null
-      });
+      return response.error(res, null, "File are not exist");
     }
 
     try {
@@ -16,23 +14,14 @@ export default {
         req.file as Express.Multer.File
       );
 
-      res.status(200).json({
-        message: "Success upload a file",
-        data: result
-      })
+      response.success(res, result, "Success upload a file!");
     } catch {
-      res.status(500).json({
-        message: "Failed upload a file",
-        data: null
-      })
+      response.error(res, null, "Failed upload a file!");
     }
   },
   async multiple(req:IReqUser, res:Response) {
     if (!req.files || req.files.length === 0) {
-      return res.status(400).json({
-        message: "File are not exist",
-        data: null
-      });
+      return response.error(res, null, "Files are not exist");
     }
 
     try {
@@ -40,15 +29,9 @@ export default {
         req.files as Express.Multer.File[]
       );
 
-      res.status(200).json({
-        message: "Success upload files",
-        data: result
-      })
+      response.success(res, result, "Success upload files!");
     } catch {
-      res.status(500).json({
-        message: "Failed upload files",
-        data: null
-      })
+      response.error(res, null, "Failed upload files!");
     }
   },
   async remove(req:IReqUser, res:Response) {
@@ -56,16 +39,10 @@ export default {
       const { fileUrl } = req.body as { fileUrl: string };
       const result = await uploader.remove(fileUrl);
 
-      res.status(200).json({
-        message: "Success remove a file",
-        data: result
-      });
+      response.success(res, result, "Success remove a file!");
 
     } catch {
-      res.status(500).json({
-        message: "Failed remove a file",
-        data: null
-      })
+      response.error(res, null, "Failed remove a file!");
     }
   },
 };
